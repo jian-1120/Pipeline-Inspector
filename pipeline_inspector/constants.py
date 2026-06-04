@@ -1,0 +1,7 @@
+"""Single read site for v1 thresholds. Per SCAFFOLD_PLAN_V1.md Section 3."""
+
+SCALE_EPSILON = 1e-4
+UV_BBOX_EPSILON = 1e-5
+POLYCOUNT_CAP = 500_000
+FILE_EXISTS_TIMEOUT_MS = 200
+AFFECTED_OBJECTS_CAP = 50
