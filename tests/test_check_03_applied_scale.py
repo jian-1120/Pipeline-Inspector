@@ -59,6 +59,11 @@ def test_single_unapplied_fails():
     assert result.issues[0].object_name == "Cube"
 
 
+def test_issue_detail_holds_display_scale_axes():
+    result = _run([FakeObject("Cube", scale=(2.0, 0.5, 1.0))])
+    assert result.issues[0].detail == "X: 2.0\nY: 0.5\nZ: 1.0"
+
+
 def test_unapplied_delta_scale_fails():
     result = _run([FakeObject("Cube", delta_scale=(1.0, 0.5, 1.0))])
     assert result.status == models.Status.FAIL

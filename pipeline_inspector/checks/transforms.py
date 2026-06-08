@@ -18,6 +18,14 @@ def _is_identity(components):
     return all(abs(c - 1.0) <= constants.SCALE_EPSILON for c in components)
 
 
+def _fmt_axis(value):
+    """Trim trailing zeros for display while keeping one decimal (2.0, 0.5)."""
+    text = f"{value:.4f}".rstrip("0")
+    if text.endswith("."):
+        text += "0"
+    return text
+
+
 def scale_is_applied(scale, delta_scale):
     """Pure predicate over two 3-component sequences of floats."""
     return _is_identity(scale) and _is_identity(delta_scale)
@@ -37,10 +45,9 @@ def run(inputs):
                 severity=SEVERITY,
                 object_name=obj.name,
                 reason="Object has unapplied scale.",
-                detail=(
-                    f"scale=({obj.scale[0]:.4f}, {obj.scale[1]:.4f}, {obj.scale[2]:.4f}) "
-                    f"delta_scale=({obj.delta_scale[0]:.4f}, "
-                    f"{obj.delta_scale[1]:.4f}, {obj.delta_scale[2]:.4f})"
+                detail="\n".join(
+                    f"{axis}: {_fmt_axis(value)}"
+                    for axis, value in zip("XYZ", obj.scale)
                 ),
             )
         )

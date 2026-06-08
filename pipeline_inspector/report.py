@@ -14,6 +14,55 @@ _STATUS_TOKEN = {
     models.Status.FAIL: "FAIL",
 }
 
+_APPLIED_SCALE_ID = "03_applied_scale"
+_APPLIED_SCALE_WHY = (
+    "Unapplied object scale can cause incorrect asset size "
+    "after export or import."
+)
+_APPLIED_SCALE_FIX = ("Object Mode", "Ctrl+A", "Apply Scale")
+_APPLIED_SCALE_NOTE = (
+    "This check detects Object Mode scale only.",
+    "Edit Mode geometry scaling does not count as unapplied object scale.",
+)
+_APPLIED_SCALE_PASS = "All inspected mesh objects have Object Scale = 1,1,1."
+
+
+def _applied_scale_detail(result):
+    """Detailed, artist-readable block for the Applied Scale check."""
+    lines = ["", f"{result.name}: {_STATUS_TOKEN[result.status]}", ""]
+
+    if result.status == models.Status.PASS:
+        lines.append(_APPLIED_SCALE_PASS)
+        return lines
+
+    lines.append("Affected Objects:")
+    for name in result.affected_objects:
+        lines.append(f"- {name}")
+    lines.append("")
+
+    lines.append("Current Scale:")
+    if len(result.issues) == 1:
+        lines.extend(result.issues[0].detail.split("\n"))
+    else:
+        for issue in result.issues:
+            lines.append(f"{issue.object_name}:")
+            lines.extend(f"  {axis}" for axis in issue.detail.split("\n"))
+    lines.append("")
+
+    lines.append("Why it matters:")
+    lines.append(_APPLIED_SCALE_WHY)
+    lines.append("")
+
+    lines.append("Fix:")
+    lines.append(_APPLIED_SCALE_FIX[0])
+    for step in _APPLIED_SCALE_FIX[1:]:
+        lines.append(f"→ {step}")
+    lines.append("")
+
+    lines.append("Note:")
+    lines.extend(_APPLIED_SCALE_NOTE)
+    return lines
+
 
 def render(inspection_result):
     lines = [
@@ -27,6 +76,9 @@ def render(inspection_result):
     for r in inspection_result.results:
         token = _STATUS_TOKEN[r.status]
         lines.append(f"{token}  {r.id}  {r.name}")
+    for r in inspection_result.results:
+        if r.id == _APPLIED_SCALE_ID:
+            lines.extend(_applied_scale_detail(r))
     if inspection_result.total_objects_inspected:
         lines.append("")
         lines.append(
