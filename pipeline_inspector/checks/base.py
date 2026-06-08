@@ -18,6 +18,21 @@ def make_pass(check_id, name, severity, message="Placeholder PASS — check not 
     )
 
 
+def make_not_implemented(check_id, name, message="Not implemented yet — this check did not inspect anything."):
+    """Build a NOT_IMPLEMENTED CheckResult for a scaffold placeholder.
+
+    Severity is INFO so scoring.derive() never deducts for it, keeping the
+    READY FOR DELIVERY verdict uninfluenced by checks that did not run.
+    """
+    return models.CheckResult(
+        id=check_id,
+        name=name,
+        status=models.Status.NOT_IMPLEMENTED,
+        severity=models.Severity.INFO,
+        message=message,
+    )
+
+
 def dedupe_sort_cap(object_names):
     """Dedupe, sort alphabetically, and cap to AFFECTED_OBJECTS_CAP.
 

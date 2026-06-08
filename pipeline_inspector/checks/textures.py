@@ -1,4 +1,4 @@
-"""Check 01 — Texture Presence. Scaffold placeholder; returns PASS."""
+"""Check 01 — Texture Presence. Scaffold placeholder; not implemented yet."""
 
 from .. import models
 from . import base
@@ -9,4 +9,4 @@ SEVERITY = models.Severity.BLOCKER
 
 
 def run(inputs):
-    return base.make_pass(CHECK_ID, CHECK_NAME, SEVERITY)
+    return base.make_not_implemented(CHECK_ID, CHECK_NAME)

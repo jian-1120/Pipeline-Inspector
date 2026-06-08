@@ -10,6 +10,7 @@ class Status(str, Enum):
     PASS = "PASS"
     WARNING = "WARNING"
     FAIL = "FAIL"
+    NOT_IMPLEMENTED = "NOT_IMPLEMENTED"
 
 
 class Severity(str, Enum):

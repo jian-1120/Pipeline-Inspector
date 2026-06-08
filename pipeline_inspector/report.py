@@ -12,6 +12,7 @@ _STATUS_TOKEN = {
     models.Status.PASS: "PASS",
     models.Status.WARNING: "WARN",
     models.Status.FAIL: "FAIL",
+    models.Status.NOT_IMPLEMENTED: "SKIP",
 }
 
 _APPLIED_SCALE_ID = "03_applied_scale"
@@ -110,7 +111,10 @@ def render(inspection_result):
     ]
     for r in inspection_result.results:
         token = _STATUS_TOKEN[r.status]
-        lines.append(f"{token}  {r.id}  {r.name}")
+        if r.status == models.Status.NOT_IMPLEMENTED:
+            lines.append(f"{token}  {r.id}  {r.name} — {r.message}")
+        else:
+            lines.append(f"{token}  {r.id}  {r.name}")
     for r in inspection_result.results:
         if r.id == _APPLIED_SCALE_ID:
             lines.extend(_applied_scale_detail(r))
