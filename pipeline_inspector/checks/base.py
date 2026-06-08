@@ -62,3 +62,22 @@ def make_fail(check_id, name, severity, message, object_names, issues):
         affected_objects=capped,
         issues=issues,
     )
+
+
+def make_warning(check_id, name, message, object_names, issues):
+    """Build a single WARNING CheckResult.
+
+    Severity is fixed to WARNING; affected_objects is derived from
+    object_names via dedupe_sort_cap so the stored list is always sorted
+    and capped regardless of caller input.
+    """
+    capped, _ = dedupe_sort_cap(object_names)
+    return models.CheckResult(
+        id=check_id,
+        name=name,
+        status=models.Status.WARNING,
+        severity=models.Severity.WARNING,
+        message=message,
+        affected_objects=capped,
+        issues=issues,
+    )
