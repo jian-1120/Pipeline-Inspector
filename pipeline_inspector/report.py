@@ -38,6 +38,20 @@ _TEXTURE_PRESENCE_NOTE = (
 )
 _TEXTURE_PRESENCE_PASS = "All referenced textures are packed or reachable."
 
+_MATERIAL_ASSIGNMENT_ID = "02_material_assignment"
+_MATERIAL_ASSIGNMENT_FIX = (
+    "Assign a material in the Material Properties tab,",
+    "and connect a shader node to the Material Output Surface input,",
+    "or remove unused empty material slots before export.",
+)
+_MATERIAL_ASSIGNMENT_NOTE = (
+    "This check verifies material assignment and surface connectivity only.",
+    "It does not validate shader quality, PBR correctness, or texture content.",
+)
+_MATERIAL_ASSIGNMENT_PASS = (
+    "All inspected mesh objects have export-relevant materials."
+)
+
 _UV_EXISTENCE_ID = "04_uv_existence"
 _UV_EXISTENCE_FIX = (
     "Edit Mode → U → UV Unwrap",
@@ -139,6 +153,31 @@ def _texture_presence_detail(result):
     return lines
 
 
+def _material_assignment_detail(result):
+    """Detailed, artist-readable block for the Material Assignment check."""
+    lines = ["", f"{result.name}: {_STATUS_TOKEN[result.status]}", ""]
+
+    if result.status == models.Status.PASS:
+        lines.append(_MATERIAL_ASSIGNMENT_PASS)
+        return lines
+
+    lines.append(result.message)
+    lines.append("")
+    lines.append("Affected Objects:")
+    for issue in result.issues:
+        lines.append(f"- {issue.object_name}")
+        lines.append(f"  {issue.reason}")
+    lines.append("")
+
+    lines.append("Fix:")
+    lines.extend(_MATERIAL_ASSIGNMENT_FIX)
+    lines.append("")
+
+    lines.append("Note:")
+    lines.extend(_MATERIAL_ASSIGNMENT_NOTE)
+    return lines
+
+
 def render(inspection_result):
     lines = [
         _VERDICT_TEXT[inspection_result.verdict],
@@ -161,6 +200,8 @@ def render(inspection_result):
             lines.extend(_uv_existence_detail(r))
         elif r.id == _TEXTURE_PRESENCE_ID:
             lines.extend(_texture_presence_detail(r))
+        elif r.id == _MATERIAL_ASSIGNMENT_ID:
+            lines.extend(_material_assignment_detail(r))
     if inspection_result.total_objects_inspected:
         lines.append("")
         lines.append(

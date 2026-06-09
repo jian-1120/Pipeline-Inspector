@@ -1,17 +1,20 @@
-"""Tests for placeholder checks (01 Texture, 02 Material, 05 Normal).
+"""Tests for placeholder checks (05 Normal Consistency).
 
 Placeholder checks must not present as PASS. They emit a NOT_IMPLEMENTED
 status with INFO severity so the report shows them as skipped and the
 READY FOR DELIVERY score/verdict is never influenced by a check that did
 not actually inspect anything.
+
+Check 02 Material Assignment is no longer a placeholder; its behaviour is
+covered by test_check_02_material_assignment.py.
 """
 
 from datetime import datetime
 
 from pipeline_inspector import models, report, scoring
-from pipeline_inspector.checks import materials, normals
+from pipeline_inspector.checks import normals
 
-PLACEHOLDERS = [materials, normals]
+PLACEHOLDERS = [normals]
 
 
 def _run(mod):
@@ -61,7 +64,7 @@ def test_placeholder_does_not_count_as_blocker_alongside_a_real_fail():
         severity=models.Severity.BLOCKER,
         message="x",
     )
-    results = [_run(materials), failing]
+    results = [_run(normals), failing]
     score, verdict, blocker_count, warning_count = scoring.derive(results)
     assert blocker_count == 1
     assert score == 85
@@ -82,21 +85,19 @@ def _result_with(check_results):
 
 
 def test_report_renders_skip_token_not_pass():
-    lines = report.render(_result_with([_run(materials)]))
-    summary = [ln for ln in lines if "02_material_assignment" in ln]
+    lines = report.render(_result_with([_run(normals)]))
+    summary = [ln for ln in lines if "05_normal_consistency" in ln]
     assert len(summary) == 1
     assert summary[0].startswith("SKIP")
     assert "PASS" not in summary[0]
 
 
 def test_report_summary_line_explains_skip():
-    lines = report.render(_result_with([_run(materials)]))
-    summary = [ln for ln in lines if "02_material_assignment" in ln][0]
+    lines = report.render(_result_with([_run(normals)]))
+    summary = [ln for ln in lines if "05_normal_consistency" in ln][0]
     assert "Not implemented" in summary
 
 
 def test_report_does_not_crash_on_not_implemented_status():
-    lines = report.render(
-        _result_with([_run(materials), _run(normals)])
-    )
+    lines = report.render(_result_with([_run(normals)]))
     assert any("05_normal_consistency" in ln for ln in lines)
