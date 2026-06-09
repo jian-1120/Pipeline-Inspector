@@ -9,9 +9,9 @@ not actually inspect anything.
 from datetime import datetime
 
 from pipeline_inspector import models, report, scoring
-from pipeline_inspector.checks import materials, normals, textures
+from pipeline_inspector.checks import materials, normals
 
-PLACEHOLDERS = [textures, materials, normals]
+PLACEHOLDERS = [materials, normals]
 
 
 def _run(mod):
@@ -61,7 +61,7 @@ def test_placeholder_does_not_count_as_blocker_alongside_a_real_fail():
         severity=models.Severity.BLOCKER,
         message="x",
     )
-    results = [_run(textures), failing]
+    results = [_run(materials), failing]
     score, verdict, blocker_count, warning_count = scoring.derive(results)
     assert blocker_count == 1
     assert score == 85
@@ -82,8 +82,8 @@ def _result_with(check_results):
 
 
 def test_report_renders_skip_token_not_pass():
-    lines = report.render(_result_with([_run(textures)]))
-    summary = [ln for ln in lines if "01_texture_presence" in ln]
+    lines = report.render(_result_with([_run(materials)]))
+    summary = [ln for ln in lines if "02_material_assignment" in ln]
     assert len(summary) == 1
     assert summary[0].startswith("SKIP")
     assert "PASS" not in summary[0]
@@ -97,6 +97,6 @@ def test_report_summary_line_explains_skip():
 
 def test_report_does_not_crash_on_not_implemented_status():
     lines = report.render(
-        _result_with([_run(textures), _run(materials), _run(normals)])
+        _result_with([_run(materials), _run(normals)])
     )
     assert any("05_normal_consistency" in ln for ln in lines)

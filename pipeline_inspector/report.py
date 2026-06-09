@@ -27,6 +27,17 @@ _APPLIED_SCALE_NOTE = (
 )
 _APPLIED_SCALE_PASS = "All inspected mesh objects have Object Scale = 1,1,1."
 
+_TEXTURE_PRESENCE_ID = "01_texture_presence"
+_TEXTURE_PRESENCE_FIX = (
+    "Pack textures via File → External Data → Pack Resources,",
+    "or restore the missing files at their referenced paths before export.",
+)
+_TEXTURE_PRESENCE_NOTE = (
+    "This check verifies texture reachability only.",
+    "It does not validate texture resolution, color space, or UV layout.",
+)
+_TEXTURE_PRESENCE_PASS = "All referenced textures are packed or reachable."
+
 _UV_EXISTENCE_ID = "04_uv_existence"
 _UV_EXISTENCE_FIX = (
     "Edit Mode → U → UV Unwrap",
@@ -100,6 +111,34 @@ def _uv_existence_detail(result):
     return lines
 
 
+def _texture_presence_detail(result):
+    """Detailed, artist-readable block for the Texture Presence check."""
+    lines = ["", f"{result.name}: {_STATUS_TOKEN[result.status]}", ""]
+
+    if result.status == models.Status.PASS:
+        lines.append(_TEXTURE_PRESENCE_PASS)
+        return lines
+
+    if result.status == models.Status.WARNING:
+        lines.append(result.message)
+        return lines
+
+    lines.append(result.message)
+    lines.append("")
+    lines.append("Affected Objects:")
+    for name in result.affected_objects:
+        lines.append(f"- {name}")
+    lines.append("")
+
+    lines.append("Fix:")
+    lines.extend(_TEXTURE_PRESENCE_FIX)
+    lines.append("")
+
+    lines.append("Note:")
+    lines.extend(_TEXTURE_PRESENCE_NOTE)
+    return lines
+
+
 def render(inspection_result):
     lines = [
         _VERDICT_TEXT[inspection_result.verdict],
@@ -120,6 +159,8 @@ def render(inspection_result):
             lines.extend(_applied_scale_detail(r))
         elif r.id == _UV_EXISTENCE_ID:
             lines.extend(_uv_existence_detail(r))
+        elif r.id == _TEXTURE_PRESENCE_ID:
+            lines.extend(_texture_presence_detail(r))
     if inspection_result.total_objects_inspected:
         lines.append("")
         lines.append(
