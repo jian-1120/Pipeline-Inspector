@@ -64,6 +64,20 @@ _UV_EXISTENCE_NOTE = (
 )
 _UV_EXISTENCE_PASS = "All inspected mesh objects have a UV map."
 
+_NORMAL_CONSISTENCY_ID = "05_normal_consistency"
+_NORMAL_CONSISTENCY_FIX = (
+    "Edit Mode → select all → Mesh → Normals → Recalculate Outside,",
+    "then re-check before export.",
+)
+_NORMAL_CONSISTENCY_NOTE = (
+    "This check flags contradictory face winding inside manifold components only.",
+    "It does not judge inward vs outward orientation, and it skips "
+    "non-manifold components, custom-normal meshes, and meshes over 500k polygons.",
+)
+_NORMAL_CONSISTENCY_PASS = (
+    "Face winding is consistent across all inspected meshes."
+)
+
 
 def _applied_scale_detail(result):
     """Detailed, artist-readable block for the Applied Scale check."""
@@ -178,6 +192,39 @@ def _material_assignment_detail(result):
     return lines
 
 
+def _normal_consistency_detail(result):
+    """Detailed, artist-readable block for the Normal Consistency check.
+
+    PASS may carry an informational non-manifold note in its message; WARN is
+    the skip path (custom normals / oversize) and shows its skip reason only.
+    """
+    lines = ["", f"{result.name}: {_STATUS_TOKEN[result.status]}", ""]
+
+    if result.status == models.Status.PASS:
+        lines.append(result.message or _NORMAL_CONSISTENCY_PASS)
+        return lines
+
+    if result.status == models.Status.WARNING:
+        lines.append(result.message)
+        return lines
+
+    lines.append(result.message)
+    lines.append("")
+    lines.append("Affected Objects:")
+    for issue in result.issues:
+        lines.append(f"- {issue.object_name}")
+        lines.append(f"  {issue.reason}")
+    lines.append("")
+
+    lines.append("Fix:")
+    lines.extend(_NORMAL_CONSISTENCY_FIX)
+    lines.append("")
+
+    lines.append("Note:")
+    lines.extend(_NORMAL_CONSISTENCY_NOTE)
+    return lines
+
+
 def render(inspection_result):
     lines = [
         _VERDICT_TEXT[inspection_result.verdict],
@@ -202,6 +249,8 @@ def render(inspection_result):
             lines.extend(_texture_presence_detail(r))
         elif r.id == _MATERIAL_ASSIGNMENT_ID:
             lines.extend(_material_assignment_detail(r))
+        elif r.id == _NORMAL_CONSISTENCY_ID:
+            lines.extend(_normal_consistency_detail(r))
     if inspection_result.total_objects_inspected:
         lines.append("")
         lines.append(
