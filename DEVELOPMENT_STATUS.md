@@ -1,8 +1,8 @@
 # Development Status
 
-Pipeline Inspector is currently in **Scaffold / Early Prototype** status.
+Current status: **MVP v1 release candidate**.
 
-This file describes project maturity before Blender add-on packaging tests. It does not define new product features or implementation behavior.
+This file describes the repository state after implementation and release validation. It does not define new product scope.
 
 ## Phase Status
 
@@ -13,21 +13,35 @@ This file describes project maturity before Blender add-on packaging tests. It d
 | MVP Definition | Complete |
 | Architecture | Complete |
 | Implementation Spec | Complete |
-| Scaffold | Complete |
-| Real Checks | Not complete |
-| Blender Runtime Test | Not complete |
+| Add-on Shell | Complete |
+| Check 01 Texture Presence | Complete |
+| Check 02 Material Assignment | Complete |
+| Check 03 Applied Scale | Complete |
+| Check 04 UV Existence | Complete |
+| Check 05 Normal Consistency | Complete |
+| Repository Tests | Complete |
+| Release Package Build | Complete |
+| Blender 5.1.1 Runtime Validation | Complete |
+| GitHub Release Publication | Pending |
 
 ## Current Repository State
 
-The repository contains an initial Blender add-on folder:
+The repository contains a Blender add-on folder:
 
 - `pipeline_inspector/`
 
-The scaffold includes registration shell, panel/operator shell, scoring/report modules, and five placeholder check modules.
+The add-on includes:
 
-## Current Placeholder Checks
+- Blender registration entry point
+- one `Run Inspection` operator
+- one View3D side panel
+- five implemented MVP checks
+- score and verdict derivation
+- report rendering
+- repository tests
+- release validation evidence
 
-The current check modules exist as scaffold placeholders only:
+## Implemented Checks
 
 1. Texture Presence
 2. Material Assignment
@@ -35,24 +49,38 @@ The current check modules exist as scaffold placeholders only:
 4. UV Existence
 5. Normal Consistency
 
-They do not yet perform real inspection logic and must not be used for real delivery decisions.
+## Current Verification
+
+Repository tests:
+
+```text
+137 passed
+```
+
+Release validation:
+
+```text
+PASS
+```
+
+Validated package:
+
+```text
+PipelineInspector_MVP_v1.0.0.zip
+```
 
 ## Current Use
 
 Suitable now:
 
-- repository review
-- zip packaging test
-- Blender add-on load test
-- registration sanity check
+- MVP v1 release candidate review
+- Blender install verification
+- local pre-delivery inspection
+- dogfood testing on real assets
 
-Not suitable now:
+Still required before public announcement:
 
-- real asset inspection
-- client delivery decisions
-- marketplace submission decisions
-- production quality gates
-
-## Gate Before Real Product Use
-
-Pipeline Inspector cannot be considered usable until real checks are implemented and tested inside Blender runtime.
+- create GitHub release notes
+- attach the final release zip
+- perform one manual UI screenshot verification
+- monitor Check05 false positives on real assets

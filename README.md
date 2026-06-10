@@ -1,94 +1,118 @@
 # Pipeline Inspector
 
-Pipeline Inspector is a Blender Pre-Delivery Inspector for 3D assets.
+**Blender pre-delivery inspection add-on**
 
-Its long-term product goal is to give artists a clear **READY FOR DELIVERY SCORE** before export, upload, marketplace submission, or client handoff.
+Pipeline Inspector helps artists check common asset delivery problems before export, upload, marketplace submission, or client handoff. It runs inside Blender and produces a single **READY FOR DELIVERY** score with blockers, warnings, and affected object names.
 
-## What This Is
+Current version: **v1.0.0 MVP**
 
-Pipeline Inspector is intended to be a final pre-delivery gate for Blender files. It is not positioned as a general modeling assistant or a broad mesh cleanup utility.
+Validated with: **Blender 5.1.1**
 
-The product idea is simple:
+## Why It Exists 🎯
 
-- inspect a small set of delivery risks
-- show blockers and warnings
-- produce a READY FOR DELIVERY score
-- help users avoid avoidable rework before sending assets out of Blender
+3D assets often fail delivery for simple reasons: missing textures, empty materials, unapplied scale, missing UVs, or inconsistent face winding. Pipeline Inspector is a small pre-delivery gate for those risks.
 
-## What This Is Not
+It is not a broad mesh cleanup suite, repair tool, cloud service, or engine simulator. It is a focused inspection add-on for deciding whether a Blender file is ready to leave the creator.
 
-Pipeline Inspector is **not Mesh Checker 2**.
+## Features ✨
 
-It is not trying to become a full mesh validator, topology suite, repair tool, marketplace automation system, engine simulator, or production platform.
+- READY FOR DELIVERY score
+- Blocking and warning counts
+- Five focused delivery checks
+- Affected object list
+- One-click manual inspection
+- Viewport side-panel report
+- Read-only behavior: it does not modify the scene
 
-The current repository should be understood as a productized early prototype scaffold, not as a usable quality-control product.
+## MVP Checks 🔍
 
-## Current Status
+| Check | Name | What It Catches |
+|---|---|---|
+| 01 | Texture Presence | Missing or unreachable referenced image textures |
+| 02 | Material Assignment | Missing, empty, legacy, or disconnected material assignment |
+| 03 | Applied Scale | Mesh objects with Object Mode scale not equal to `1,1,1` |
+| 04 | UV Existence | Mesh objects with no usable UV map |
+| 05 | Normal Consistency | Internally inconsistent face winding in manifold mesh components |
 
-Current phase: **Scaffold / Early Prototype**
+## READY FOR DELIVERY Score ✅
 
-The repository currently contains:
+Pipeline Inspector starts each run at 100.
 
-- research and evidence documents
-- MVP definition documents
-- architecture and implementation specification documents
-- an initial `pipeline_inspector/` Blender add-on scaffold
-- five placeholder check modules
+- `READY FOR DELIVERY`: no blocking failures
+- `READY WITH WARNINGS`: no blocking failures, but warnings exist
+- `NOT READY FOR DELIVERY`: one or more blocking checks failed
 
-The five current check modules are:
+The score is a delivery-readiness signal. It is not a general art-quality score.
 
-1. Texture Presence
-2. Material Assignment
-3. Applied Scale
-4. UV Existence
-5. Normal Consistency
+## Screenshot
 
-Important: these checks are currently placeholders. They return scaffold results and do **not** perform real inspection logic yet.
+UI screenshot placeholder:
 
-## Important Limitations
+```text
+docs/screenshots/pipeline-inspector-v1-ui.png
+```
 
-The current version:
+Add a screenshot at that path when preparing the public GitHub page or marketplace listing.
 
-- has not implemented real delivery checks
-- has not been validated in Blender runtime
-- cannot detect real asset problems
-- cannot be used to decide whether an asset is ready for delivery
-- should not be used for marketplace, client, or production handoff decisions
+## Installation 📦
 
-At this stage, the add-on is only suitable for packaging and Blender load testing.
+Download the release package:
 
-## Repository Layout
+```text
+PipelineInspector_MVP_v1.0.0.zip
+```
 
-Root-level product documents:
+Start with Blender's ZIP installer. If Blender cannot recognize the zip on your system, use the manual folder-copy method.
 
-- `MVP_CHECKLIST.md` - MVP delivery check definition
-- `MVP_EVIDENCE_MAPPING.md` - evidence mapping for MVP checks
-- `TOP_FAILURES.md` - highest-frequency delivery failures
-- `MVP_REVIEW_REPORT.md` - MVP evidence review
-- `ARCHITECTURE_MVP_V1.md` - locked MVP architecture document
-- `IMPLEMENTATION_SPEC_V1.md` - implementation specification for the scaffolded MVP
-- `SCAFFOLD_PLAN_V1.md` - scaffold layout and responsibility plan
-- `DEVELOPMENT_STATUS.md` - current project status
-- `ROADMAP.md` - restrained packaging and real-check roadmap
-- `INSTALLATION.md` - current test installation notes
+See [INSTALLATION.md](INSTALLATION.md) for full installation and troubleshooting steps.
 
-Source scaffold:
+## Usage ▶️
 
-- `pipeline_inspector/` - installable Blender add-on folder
+1. Open a `.blend` file.
+2. In the 3D Viewport, press `N` to open the side panel.
+3. Open the `Pipeline Inspector` tab.
+4. Click `Run Inspection`.
+5. Review the verdict, score, failed checks, warnings, and affected objects.
 
-Research folders:
+Pipeline Inspector reports problems only. It does not auto-fix or edit your scene.
 
-- `research/`
-- `evidence/`
-- `prd/`
-- `roadmap/`
-- `architecture/`
+## Current Limitations
 
-## Installation Status
+- Does not repair assets automatically
+- Does not simulate Unity, Unreal, Godot, or marketplace import behavior
+- Does not validate shader quality, PBR correctness, texture resolution, UV layout quality, or texel density
+- Does not inspect licensing, thumbnails, product descriptions, or documentation
+- Check05 is conservative and should be dogfooded on real production assets
 
-See `INSTALLATION.md`.
+## Roadmap 🗺️
 
-Current installation is for loading tests only. The current add-on should not be treated as a usable inspection product.
+Short-term:
+
+1. Publish GitHub Release `v1.0.0`
+2. Attach `PipelineInspector_MVP_v1.0.0.zip`
+3. Add UI screenshots under `docs/screenshots/`
+4. Prepare Superhive / marketplace listing materials
+5. Dogfood Check05 Normal Consistency on real assets
+
+Not planned for MVP v1:
+
+- AI analysis
+- cloud services
+- auto-fix
+- team features
+- broad mesh cleanup
+- engine import simulation
+
+## Release Status
+
+- Five MVP checks implemented
+- `137` repository tests passing
+- Blender 5.1.1 runtime validation passed
+- Release package prepared: `PipelineInspector_MVP_v1.0.0.zip`
+
+## Author
+
+GitHub: [jian-1120/Pipeline-Inspector](https://github.com/jian-1120/Pipeline-Inspector)
 
 ## License
 
