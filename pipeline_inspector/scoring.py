@@ -16,7 +16,12 @@ def derive(results):
             score -= 5
             warning_count += 1
         elif r.status == models.Status.WARNING:
-            score -= 3
+            # Per spec Section 4, only a WARNING-severity WARNING deducts. An
+            # INFO-severity WARNING (e.g. Check 05 custom-normals/oversize skip)
+            # is informational: it counts toward warning_count and so caps the
+            # verdict at READY_WITH_WARNINGS, but it does not lower the score.
+            if r.severity == models.Severity.WARNING:
+                score -= 3
             warning_count += 1
 
     if blocker_count >= 5:
